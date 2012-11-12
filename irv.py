@@ -6,10 +6,11 @@ def bestremaining(remainingCandidates, vote):
             return c
     return None
 
-def createstacks(remainingCandidates, votes):
-    stacks= dict.fromkeys(remainingCandidates,[])
-    bestcandidates = [bestremaining(remainingCandidates,vote) for vote in votes]
-    print bestcandidates    
+def redistributeVotes(remainingCandidates, votes):
+    stacks= {}
+    for vote in votes:
+        bestCan=bestremaining(remainingCandidates,vote)
+        stacks.setdefault(bestCan,list()).append(vote)
     return stacks
 
 
@@ -24,20 +25,26 @@ for l in f:
 
 f.close()
 
+required= len(votes)/2 + 1
+
 acceptance = {}
 for vote in votes:
     for c in vote:
         acceptance[c]=acceptance.setdefault(c,0)+1
+        
+print acceptance
 
-candidates = sorted(acceptance.keys(), key=lambda x: acceptance[x])
-
-
-createstacks(candidates, votes)
+candidates = sorted(acceptance.keys())
+remainingCandidates = filter(lambda x: acceptance[x] >= required, candidates)
+while not remainingCandidates and numberOfPositions > 0:
+    stacks=redistributeVotes(remainingCandidates, votes)
+    
+print stacks
 
 print candidates
 print len(votes)
 print votes
-print acceptance
+
 
 
 

@@ -13,6 +13,11 @@ def redistributeVotes(remainingCandidates, votes):
         stacks.setdefault(bestCan,list()).append(vote)
     return stacks
 
+# for now remove all 
+def breakTie(tiedCandidates):
+    if len(tiedCandidates) > 1:
+        print "shit!"
+    return tiedCandidates
 
 fileName = sys.argv[1]
 numberOfPositions = int(sys.argv[2])
@@ -36,10 +41,29 @@ print acceptance
 
 candidates = sorted(acceptance.keys())
 remainingCandidates = filter(lambda x: acceptance[x] >= required, candidates)
-while not remainingCandidates and numberOfPositions > 0:
+
+print remainingCandidates
+
+numberOfPositions = min(numberOfPositions , len(remainingCandidates))
+
+while numberOfPositions > 0:
     stacks=redistributeVotes(remainingCandidates, votes)
+    print stacks
+    numberVotes = [len(stacks[x]) for x in remainingCandidates]
+    if max(numberVotes) >= required:
+        winner = filter(lambda x: len(stacks[x])>= required, remainingCandidates)[0]
+        print "winner is ...." + winner
+        remainingCandidates.remove(winner)
+        numberOfPositions = numberOfPositions - 1
+        continue
+        
     
-print stacks
+    print numberVotes
+    minimum = min(numberVotes)
+    tiedCandidates = filter(lambda x: len(stacks[x])==min , remainingCandidates)
+    toBeRemoved = breakTie(tiedCandidates)
+    remainingCandidates = filter (lambda x: x not in toBeRemoved,remainingCandidates)
+    
 
 print candidates
 print len(votes)

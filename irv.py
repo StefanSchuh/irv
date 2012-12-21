@@ -13,11 +13,21 @@ def redistributeVotes(remainingCandidates, votes):
         stacks.setdefault(bestCan,list()).append(vote)
     return stacks
 
-# for now remove all 
+def askForTieBreak(tiedCandidates):
+	print "Folgende Kandidaten sind gleich auf" 
+	print tiedCandidates
+	c = None
+	while (c not in tiedCandidates):
+		c = raw_input("Wer wir eleminiert?\n")
+	return [c]
+
+
 def breakTie(tiedCandidates):
     if len(tiedCandidates) > 1:
-        print "shit!"
+        return askForTieBreak(tiedCandidates)
     return [tiedCandidates[0]]
+
+
 
 def findWinner(candidates,votes):
     while (1):
@@ -46,21 +56,28 @@ for l in f:
 
 f.close()
 
-required= len(votes)/2 + 1
+print "Abgegebene Stimmen: " + str(len(votes))
+
+required = len(votes)/2 + 1
+print "noetige Stimmen: " + str(required)
 
 acceptance = {}
 for vote in votes:
     for c in vote:
         acceptance[c]=acceptance.setdefault(c,0)+1
         
-print acceptance
+print "Ergebnis der Akzeptanzwahl:"
+candidates = sorted(acceptance.keys(),cmp=lambda x,y:acceptance[y]-acceptance[x])
+for c in candidates:
+	print str(c) + " " + str(acceptance[c])
 
-candidates = sorted(acceptance.keys())
 remainingCandidates = filter(lambda x: acceptance[x] >= required, candidates)
 
-print remainingCandidates
+print "Kandidaten mit mindestesten 50% der Stimmen: "+str(remainingCandidates)
 
 numberOfPositions = min(numberOfPositions , len(remainingCandidates))
+
+print "In dieser Wahl werden "+str(numberOfPositions)+" Personen gewaehlt."
 
 for i in range(numberOfPositions):
     winner = findWinner(remainingCandidates, votes)

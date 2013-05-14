@@ -9,8 +9,8 @@ def bestremaining(remainingCandidates, vote):
 def redistributeVotes(remainingCandidates, votes):
     stacks= {}
     for vote in votes:
-        bestCan=bestremaining(remainingCandidates,vote)
-        stacks.setdefault(bestCan,list()).append(vote)
+        bestCan=bestremaining(remainingCandidates,votes[vote])
+        stacks.setdefault(bestCan,{})[vote]=votes[vote]
     return stacks
 
 def askForTieBreak(tiedCandidates):
@@ -27,12 +27,17 @@ def breakTie(tiedCandidates):
         return askForTieBreak(tiedCandidates)
     return [tiedCandidates[0]]
 
+def printStack(stack):
+    for candidate in stack:
+        print str(candidate) + " hat "+ str(len(stack[candidate]))+" Stimmen auf seinem Stapel"
+        for pseudoId in stack[candidate]:
+            print str(pseudoId)+" : "+str(stack[candidate][pseudoId])
 
 
 def findWinner(candidates,votes):
     while (1):
         stacks=redistributeVotes(candidates, votes)
-        print stacks
+        printStack(stacks)
         numberVotes = [len(stacks[x]) for x in candidates]
         if max(numberVotes) >= required:
             winner = filter(lambda x: len(stacks[x])>= required, candidates)[0]
@@ -45,16 +50,21 @@ def findWinner(candidates,votes):
         print "Eliminiert: " + str(toBeRemoved)
         candidates = filter (lambda x: x not in toBeRemoved,candidates)
 
-fileName = sys.argv[1]
-numberOfPositions = int(sys.argv[2])
+fileName = sys.argv[1] #"test-data/test.dat"
+numberOfPositions = int(sys.argv[2]) # 2
 
 f = open(fileName,'r')
-votes = []
+votes = {}
+i=1
 
 for l in f:
-    votes.append(l.lower().split())
+    votes[i]=l.lower().split()
+    i=i+1
 
 f.close()
+
+print len(votes)
+print votes
 
 print "Abgegebene Stimmen: " + str(len(votes))
 
@@ -62,7 +72,7 @@ required = len(votes)/2 + 1
 print "noetige Stimmen: " + str(required)
 
 acceptance = {}
-for vote in votes:
+for vote in votes.values():
     for c in vote:
         acceptance[c]=acceptance.setdefault(c,0)+1
         
@@ -84,9 +94,7 @@ for i in range(numberOfPositions):
     remainingCandidates.remove(winner)
     
 
-print candidates
-print len(votes)
-print votes
+
 
 
 

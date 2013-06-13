@@ -51,6 +51,10 @@ def findWinner(candidates,votes):
         print "Der Stapel des Kandidaten " + str(toBeRemoved)+" wird aufgelöst."
         candidates = filter (lambda x: x not in toBeRemoved,candidates)
 
+if not sys.argv[1:]: 
+    sys.argv += ["test-data/LL_Top3_IRV#01", "3"] 
+
+
 fileName = sys.argv[1] #"test-data/test.dat"
 numberOfPositions = int(sys.argv[2]) # 2
 
@@ -94,10 +98,10 @@ print "Somit werden in dieser Wahl "+str(numberOfPositions)+" Personen gewählt.
 gewinner = []
 for i in range(numberOfPositions):
     winner = findWinner(remainingCandidates, votes)
-    gewinner.add(winner)
+    gewinner.append(winner)
     remainingCandidates.remove(winner)
 
-print "Folgende Kandidaten haben die Wahl gewonnen: "+ gewinner
+print "Folgende Kandidaten haben die Wahl gewonnen: "+ str(gewinner)
     
 
 
